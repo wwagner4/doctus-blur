@@ -21,7 +21,7 @@ import javafx.event.ActionEvent
 import javafx.event.Event
 
 
-object BlurSJvm extends App {
+object BlurJvm extends App {
 
   Application.launch(classOf[MyApp], args: _*);
 
@@ -29,7 +29,7 @@ object BlurSJvm extends App {
 
     override def start(stage: Stage) {
 
-      val width = 720
+      val width = 1000
       val height = 520
 
       val canvasFx = new Canvas(width, height);

@@ -17,9 +17,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
 
   def row(j: Int) = for (i <- 0 until 10) yield line(j, i)
 
-  def line(col: Int, row: Int): Line = Line(DoctusPoint((col + 1) * 200, (row + 1) * 45), 1 + row * 2.5, col)
+  def line(col: Int, row: Int): Line = Line(DoctusPoint(30 + col * 200, (row + 1) * 45), 1 + row * 2.5, col)
 
   def draw(g: DoctusGraphics): Unit = {
+    g.noStroke()
     g.fill(DoctusColorWhite, 255)
     g.rect(0, 0, canvas.width, canvas.height)
 

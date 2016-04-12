@@ -29,8 +29,8 @@ object BlurSJvm extends App {
 
     override def start(stage: Stage) {
 
-      val width = 700
-      val height = 500
+      val width = 720
+      val height = 520
 
       val canvasFx = new Canvas(width, height);
 

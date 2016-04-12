@@ -5,26 +5,36 @@ import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
 
-case class Line(pos: DoctusPoint)
+case class Line(pos: DoctusPoint, weight: Double, blur: Int)
 
 case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
+  
+  override def frameRate = None
 
   val ran = new java.util.Random
 
-  var rows = for (i <- 1 to 10) yield row(i)
+  var rows = for (i <- 0 until 5) yield row(i)
 
-  def row(j: Int) = for (i <- 1 to 20) yield line(j, i)
+  def row(j: Int) = for (i <- 0 until 10) yield line(j, i)
 
-  def line(col: Int, row: Int): Line = Line(DoctusPoint(col, row))
+  def line(col: Int, row: Int): Line = Line(DoctusPoint((col + 1) * 200, (row + 1) * 45), 1 + row * 2.5, col)
 
   def draw(g: DoctusGraphics): Unit = {
-    g.stroke(DoctusColorBlack, 255)
-    g.strokeWeight(5)
+    g.fill(DoctusColorWhite, 255)
+    g.rect(0, 0, canvas.width, canvas.height)
 
     def drawRow(row: Seq[Line]): Unit = row.foreach { line =>
+      require(line.blur >= 0)
+      
       val x = line.pos.x
       val y = line.pos.y
-      g.line(x * 10, y * 10, x * 10, y * 10 + 100)
+      val alpha = 255.0 / (line.blur + 1)
+      (1 to (line.blur * 2 + 1)).foreach { strokeFac =>
+        g.stroke(DoctusColorBlack, alpha)
+        g.strokeWeight(line.weight * strokeFac)
+        g.line(x, y, x, y + 40)
+
+      }
     }
 
     rows.foreach { row => drawRow(row) }

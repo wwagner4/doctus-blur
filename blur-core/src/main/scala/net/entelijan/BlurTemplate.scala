@@ -30,15 +30,13 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
       val x = line.pos.x
       val y = line.pos.y
       val alpha = 255 * math.pow(2, -line.blur)
-      println("alpha = %.2f <- %d" format (alpha, line.blur))
-      (1 to (line.blur * 2 + 1)).foreach { strokeFac =>
+      (1 to (line.blur * 6 + 1)).foreach { strokeFac =>
         g.stroke(DoctusColorBlack, alpha)
-        g.strokeWeight(line.weight * strokeFac)
+        g.strokeWeight(line.weight + strokeFac)
         g.line(x, y, x, y + 40)
 
       }
     }
-
     rows.foreach { row => drawRow(row) }
   }
 

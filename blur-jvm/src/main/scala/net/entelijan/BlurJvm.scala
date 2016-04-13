@@ -54,12 +54,12 @@ object BlurJvm extends App {
       stage.setScene(scene);
 
       stage.show();
+
       def handler[T <: Event](h: (T => Unit)): EventHandler[T] =
         new EventHandler[T] {
           override def handle(event: T): Unit = h(event)
         }
 
-      // Find a better solution to exit
       stage.setOnCloseRequest(handler(e => System.exit(0)))
 
 

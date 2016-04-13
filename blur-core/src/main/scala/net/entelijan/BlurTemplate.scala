@@ -25,12 +25,16 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
     g.rect(0, 0, canvas.width, canvas.height)
 
     def drawRow(row: Seq[Line]): Unit = row.foreach { line =>
+      
       require(line.blur >= 0)
       
       val x = line.pos.x
       val y = line.pos.y
       val alpha = 255 * math.pow(2, -line.blur)
-      (1 to (line.blur * 6 + 1)).foreach { strokeFac =>
+      val strokeFacs = line.blur + 1
+      g.fill(DoctusColorBlue, 255)
+      g.text("%.2f %s" format(line.weight, strokeFacs), line.pos, 0)
+      (1 to strokeFacs).foreach { strokeFac =>
         g.stroke(DoctusColorBlack, alpha)
         g.strokeWeight(line.weight + strokeFac)
         g.line(x, y, x, y + 40)

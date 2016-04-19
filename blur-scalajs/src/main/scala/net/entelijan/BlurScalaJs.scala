@@ -18,7 +18,7 @@ object BlurScalaJs {
     val sched = DoctusSchedulerScalajs
 
     // Common to all platforms
-    val templ = net.entelijan.BlurDoctusTemplate(canvas)
+    val templ = net.entelijan.BlurDoctusTemplate(canvas, sched)
     DoctusTemplateController(templ, sched, canvas)
 
 

@@ -32,7 +32,7 @@ object BlurJvm extends App {
       val width = 1000
       val height = 520
 
-      val canvasFx = new Canvas(width, height);
+      val canvasFx = new Canvas();
 
       val sched = DoctusSchedulerJvm
       val canvas = DoctusTemplateCanvasFx(canvasFx)
@@ -48,7 +48,7 @@ object BlurJvm extends App {
       canvasFx.heightProperty().bind(scene.heightProperty())
 
       // Common to all platforms
-      val templ = BlurDoctusTemplate(canvas)
+      val templ = BlurDoctusTemplate(canvas, sched)
       DoctusTemplateController(templ, sched, canvas)
 
       stage.setScene(scene);

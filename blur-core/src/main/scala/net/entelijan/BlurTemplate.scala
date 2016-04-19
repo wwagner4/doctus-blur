@@ -35,8 +35,6 @@ case class Line(
 
 }
 
-// TODOs
-// - scale canvas if window is scaled
 case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
 
   val ran = new java.util.Random

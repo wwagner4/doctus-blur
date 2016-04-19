@@ -30,16 +30,21 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas) extends DoctusTemplate {
       
       val x = line.pos.x
       val y = line.pos.y
-      val alpha = 255 * math.pow(2, -line.blur)
-      val strokeFacs = line.blur + 1
-      g.fill(DoctusColorBlue, 255)
-      g.text("%.2f %s" format(line.weight, strokeFacs), line.pos, 0)
-      (1 to strokeFacs).foreach { strokeFac =>
+      val maxStrokeFac = line.blur + 1
+      val strokeFacs = (1 to maxStrokeFac).toList
+      
+      val alphas = strokeFacs.map { _ => 255 * math.pow(2, -line.blur) }
+      val asum = alphas.sum
+      
+      val anorm = alphas.map { a => a / asum * 255 }
+      
+      strokeFacs.zip(anorm).foreach { case(strokeFac, alpha) =>
         g.stroke(DoctusColorBlack, alpha)
-        g.strokeWeight(line.weight + strokeFac)
+        g.strokeWeight(line.weight + (strokeFac - 1) * 5)
         g.line(x, y, x, y + 40)
-
       }
+      //g.fill(DoctusColorBlue, 255)
+      //g.text("%.2f %s" format(line.weight, maxStrokeFac), line.pos, 0)
     }
     rows.foreach { row => drawRow(row) }
   }

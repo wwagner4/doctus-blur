@@ -8,7 +8,7 @@ import doctus.core.util.DoctusPoint
 import java.util.Random
 import scala.annotation.tailrec
 
-case class PointImage(name: String, points: List[DoctusPoint])
+case class PointImage(name: String, points: List[DoctusPoint], aspectRatio: Double)
 
 trait IPointImageGenerator {
 
@@ -26,7 +26,9 @@ object PointImageGenerator extends {
   def createPointImage(file: File, pointCnt: Int): PointImage = {
     val piximg = createPixImage(file)
     val name = extractName(file.getName)
-    PointImage(name, createPointImg(piximg, pointCnt))
+    val ratio = piximg.width.toDouble / piximg.height
+    val points = createPointImg(piximg, pointCnt)
+    PointImage(name, points, ratio)
   }
 
   def extractName(fileName: String): String = {

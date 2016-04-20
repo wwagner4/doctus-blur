@@ -5,3 +5,4 @@ bin/
 .settings/
 .cache*
 work/
+.DS_Store

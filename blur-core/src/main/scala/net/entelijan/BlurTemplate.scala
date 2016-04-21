@@ -46,13 +46,15 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   
   def createRandomLines(cnt: Int): List[Line] = {
-
-    def ranPos: DoctusPoint = DoctusPoint(ran.nextDouble(), ran.nextDouble())
+    
+    val pi = PixImageHolder.img01
+   
+    val poimg = PointImageGenerator.createPointImage(pi, 200)
 
     def ranAngle: Double = ran.nextDouble() * math.Pi
 
-    (1 to cnt).toList.map { _ =>
-      Line(ranPos, 100, 2, ranAngle, 3)
+    poimg.points.map { p =>
+      Line(p, 100, 2, ranAngle, 3)
     }
   }
 

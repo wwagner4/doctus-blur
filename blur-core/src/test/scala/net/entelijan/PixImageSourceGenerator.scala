@@ -54,7 +54,7 @@ $inner
     inners.map { inner =>
       val innerNam = inner.name
       inner.vals.map { v => s"$innerNam.${v.name}" }.mkString(", ")
-    }.mkString(", ")
+    }.mkString(",\n       ")
   }
 
   def formatInners(inners: Seq[SrcInner]): String = {
@@ -62,7 +62,7 @@ $inner
       val nam = inner.name
       val vals = formatVals(inner.vals)
       s"""
-  object $nam {
+  private object $nam {
 $vals    
   }   
       """
@@ -73,10 +73,8 @@ $vals
     vals.map { _val =>
       val nam = _val.name
       val pxs = _val.pixels
-      s"""
-        val $nam = $pxs
-      """
-    }.mkString("")
+      s"""    val $nam = $pxs"""
+    }.mkString("\n")
   }
 
   def createImgModel(pixImages: Seq[PixImage]): Seq[SrcImage] = {
@@ -89,7 +87,7 @@ $vals
   }
 
   def createInnerModel(indexImg: Int, pixels: Seq[Double]): Seq[SrcInner] = {
-    pixels.grouped(1000).zipWithIndex.toList.map {
+    pixels.grouped(2000).zipWithIndex.toList.map {
       case (grp, index) =>
         val name = s"Inner%04d_%04d" format (indexImg, index)
         val vals = createVals(grp)
@@ -98,7 +96,7 @@ $vals
   }
 
   def createVals(pixels: Seq[Double]): Seq[SrcVal] = {
-    pixels.grouped(100).zipWithIndex.toList.map {
+    pixels.grouped(50).zipWithIndex.toList.map {
       case (grp, index) =>
         val name = s"img%04d" format index
         SrcVal(name, grp)

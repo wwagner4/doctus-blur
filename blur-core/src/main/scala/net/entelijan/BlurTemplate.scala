@@ -5,6 +5,8 @@ import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
 
+case class PixImage(width: Int, height: Int, pixels: Seq[Double])
+
 case class Line(
     pos: DoctusPoint,
     length: Double,

@@ -42,7 +42,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0003, PixImageHolder.img0004, PixImageHolder.img0005)
 
-  val pointCnt = 10000
+  val pointCnt = 1000
   
   var lines: List[Line] = createRandomLines(pointCnt)
   

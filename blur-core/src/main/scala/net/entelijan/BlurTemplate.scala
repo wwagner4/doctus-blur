@@ -14,8 +14,8 @@ case class Line(
     angle: Double,
     blur: Int) {
 
-  def draw(g: DoctusGraphics, canvas: DoctusCanvas): Unit = {
-    val pos1 = DoctusPoint(pos.x * canvas.width, pos.y * canvas.height)
+  def draw(g: DoctusGraphics, size: Double, off: DoctusVector): Unit = {
+    val pos1 = DoctusPoint(pos.x * size, pos.y * size) + off
     val vek = DoctusVector(0, length / 2.0).rot(angle)
     val p1 = pos1 + vek
     val p2 = pos1 - vek
@@ -42,23 +42,14 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0003, PixImageHolder.img0004, PixImageHolder.img0005)
 
-  val pointCnt = 1000
+  var lines: List[Line] = List.empty[Line]
   
-  var lines: List[Line] = createRandomLines(pointCnt)
-  
-  def updateLines(): Unit = {
-    lines = createRandomLines(pointCnt)
-  }
 
   
   def createRandomLines(cnt: Int): List[Line] = {
-    
     val pi = pixImages(ran.nextInt(pixImages.size))
-   
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
-
     def ranAngle: Double = ran.nextDouble() * math.Pi
-
     poimg.points.map { p =>
       Line(p, 10, 1, ranAngle, 0)
     }
@@ -67,10 +58,17 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   def draw(g: DoctusGraphics): Unit = {
 
     g.noStroke()
-    g.fill(DoctusColorWhite, 255)
+    g.fill(DoctusColorWhite, 100)
     g.rect(0, 0, canvas.width, canvas.height)
     
-    lines.foreach { l => l.draw(g, canvas) }
+    val x = ran.nextInt(canvas.width) * 0.9 -200
+    val y = ran.nextInt(canvas.height) * 0.5 -200
+    val size = 100 + ran.nextInt(900)
+
+    val cnt = (size * size * 0.01).toInt
+    lines = createRandomLines(cnt)
+    
+    lines.foreach { l => l.draw(g, size, DoctusVector(x, y)) }
   }
 
   def pointableDragged(pos: DoctusPoint): Unit = () // Nothing to do here
@@ -81,7 +79,6 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   def keyPressed(code: DoctusKeyCode): Unit = {
     if (code == DKC_Space) {
-      updateLines()
       canvas.repaint()
     }
   }

@@ -35,36 +35,32 @@ case class Line(
 }
 
 case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) extends DoctusTemplate {
+  
+  override def frameRate = None
 
   val ran = new java.util.Random
 
-  var lines: List[Line] = createRandomLines(200)
+  lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0003, PixImageHolder.img0004, PixImageHolder.img0005)
 
-  sche.start(updateLines, 500)
+  val pointCnt = 10000
+  
+  var lines: List[Line] = createRandomLines(pointCnt)
   
   def updateLines(): Unit = {
-    lines = nextLines(lines)
+    lines = createRandomLines(pointCnt)
   }
 
   
   def createRandomLines(cnt: Int): List[Line] = {
     
-    val pi = PixImageHolder.img0001
+    val pi = pixImages(ran.nextInt(pixImages.size))
    
-    val poimg = PointImageGenerator.createPointImage(pi, 4000)
+    val poimg = PointImageGenerator.createPointImage(pi, cnt)
 
     def ranAngle: Double = ran.nextDouble() * math.Pi
 
     poimg.points.map { p =>
       Line(p, 10, 1, ranAngle, 0)
-    }
-  }
-
-  def nextLines(current: List[Line]): List[Line] = {
-    current.map { l =>
-      val angle = l.angle
-      val next = (angle + 0.1) % math.Pi
-      l.copy(angle = next)
     }
   }
 
@@ -83,7 +79,12 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   def pointableReleased(pos: DoctusPoint): Unit = () // Nothing to do here
 
-  def keyPressed(code: DoctusKeyCode): Unit = () // Nothing to do here
+  def keyPressed(code: DoctusKeyCode): Unit = {
+    if (code == DKC_Space) {
+      updateLines()
+      canvas.repaint()
+    }
+  }
 
 }
 

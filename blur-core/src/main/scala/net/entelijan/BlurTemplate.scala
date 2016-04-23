@@ -47,7 +47,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   
   def createRandomLines(cnt: Int): List[Line] = {
     
-    val pi = PixImageHolder.img01
+    val pi = PixImageHolder.img0001
    
     val poimg = PointImageGenerator.createPointImage(pi, 4000)
 

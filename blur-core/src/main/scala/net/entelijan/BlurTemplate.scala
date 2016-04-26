@@ -14,11 +14,10 @@ case class Line(
     angle: Double,
     blur: Int) {
 
-  def draw(g: DoctusGraphics, size: Double, off: DoctusVector): Unit = {
-    val pos1 = DoctusPoint(pos.x * size, pos.y * size) + off
+  def draw(g: DoctusGraphics): Unit = {
     val vek = DoctusVector(0, length / 2.0).rot(angle)
-    val p1 = pos1 + vek
-    val p2 = pos1 - vek
+    val p1 = pos + vek
+    val p2 = pos - vek
     val strokeFacs = (1 to (blur + 1)).toList
     val alphas = strokeFacs.map { _ => 255 * math.pow(2, -blur) }
     val asum = alphas.sum
@@ -35,7 +34,7 @@ case class Line(
 }
 
 case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) extends DoctusTemplate {
-  
+
   override def frameRate = None
 
   val ran = new java.util.Random
@@ -43,15 +42,17 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
   var lines: List[Line] = List.empty[Line]
-  
 
-  
-  def createRandomLines(cnt: Int): List[Line] = {
+  var startPoint = DoctusPoint(0, 0)
+
+  def createRandomLines(cnt: Int, size: Double, off: DoctusVector): List[Line] = {
+
     val pi = pixImages(ran.nextInt(pixImages.size))
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
-    poimg.points.map { p =>
-      Line(p, 10, 1, ranAngle, 2)
+    poimg.points.map { pos =>
+      val pos1 = DoctusPoint(pos.x * size, pos.y * size) + off
+      Line(pos1, 10, 1, ranAngle, 2)
     }
   }
 
@@ -60,28 +61,26 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     g.noStroke()
     g.fill(DoctusColorWhite, 50)
     g.rect(0, 0, canvas.width, canvas.height)
-    
-    val size = 500 + ran.nextInt(1500)
-    val x = ran.nextInt(canvas.width)
-    val y = ran.nextInt(canvas.height) - size * 0.5
 
+    lines.foreach { l => l.draw(g) }
+  }
+
+  def pointableDragged(pos: DoctusPoint): Unit = ()
+
+  def pointablePressed(pos: DoctusPoint): Unit = {
+    startPoint = pos
+  }
+
+  def pointableReleased(pos: DoctusPoint): Unit = {
+    val vec = startPoint - pos
+    val size = math.abs(vec.y)
+    val off = startPoint - DoctusPoint(0, 0)
     val cnt = (size * size * 0.002).toInt
-    lines = createRandomLines(cnt)
-    
-    lines.foreach { l => l.draw(g, size, DoctusVector(x, y)) }
+    lines = createRandomLines(cnt, size, off)
+    canvas.repaint()
   }
 
-  def pointableDragged(pos: DoctusPoint): Unit = () // Nothing to do here
-
-  def pointablePressed(pos: DoctusPoint): Unit = () // Nothing to do here
-
-  def pointableReleased(pos: DoctusPoint): Unit = () // Nothing to do here
-
-  def keyPressed(code: DoctusKeyCode): Unit = {
-    if (code == DKC_Space) {
-      canvas.repaint()
-    }
-  }
+  def keyPressed(code: DoctusKeyCode): Unit = ()
 
 }
 

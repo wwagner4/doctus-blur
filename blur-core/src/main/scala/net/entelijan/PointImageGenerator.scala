@@ -41,8 +41,8 @@ object PointImageGenerator extends {
       if (isPoint(x, y, img)) {
         val r = img.width.toDouble / img.height
         val p =
-          if (r < 1.0) DoctusPoint((1 - r) / 2 + x * r, y)
-          else DoctusPoint(x, (r - 1) / 2 + y / r)
+          if (r < 1.0) DoctusPoint(x * r, y)
+          else DoctusPoint(x, y / r)
         createPoints(cnt - 1, p :: points, img)
       } else {
         createPoints(cnt, points, img)

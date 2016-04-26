@@ -40,7 +40,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   val ran = new java.util.Random
 
-  lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0003, PixImageHolder.img0004, PixImageHolder.img0005)
+  lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
   var lines: List[Line] = List.empty[Line]
   
@@ -61,11 +61,11 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     g.fill(DoctusColorWhite, 100)
     g.rect(0, 0, canvas.width, canvas.height)
     
-    val x = ran.nextInt(canvas.width) * 0.9 -200
-    val y = ran.nextInt(canvas.height) * 0.5 -200
     val size = 100 + ran.nextInt(900)
+    val x = ran.nextInt(canvas.width)
+    val y = ran.nextInt(canvas.height) - size * 0.5
 
-    val cnt = (size * size * 0.01).toInt
+    val cnt = (size * size * 0.005).toInt
     lines = createRandomLines(cnt)
     
     lines.foreach { l => l.draw(g, size, DoctusVector(x, y)) }

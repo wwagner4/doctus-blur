@@ -51,7 +51,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { p =>
-      Line(p, 10, 1, ranAngle, 0)
+      Line(p, 10, 1, ranAngle, 2)
     }
   }
 
@@ -65,7 +65,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     val x = ran.nextInt(canvas.width)
     val y = ran.nextInt(canvas.height) - size * 0.5
 
-    val cnt = (size * size * 0.005).toInt
+    val cnt = (size * size * 0.002).toInt
     lines = createRandomLines(cnt)
     
     lines.foreach { l => l.draw(g, size, DoctusVector(x, y)) }

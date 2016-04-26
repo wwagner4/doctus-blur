@@ -58,10 +58,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   def draw(g: DoctusGraphics): Unit = {
 
     g.noStroke()
-    g.fill(DoctusColorWhite, 100)
+    g.fill(DoctusColorWhite, 50)
     g.rect(0, 0, canvas.width, canvas.height)
     
-    val size = 100 + ran.nextInt(900)
+    val size = 500 + ran.nextInt(1500)
     val x = ran.nextInt(canvas.width)
     val y = ran.nextInt(canvas.height) - size * 0.5
 

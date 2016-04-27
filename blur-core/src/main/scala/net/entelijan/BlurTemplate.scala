@@ -7,12 +7,18 @@ import doctus.core.color._
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
+trait Shape {
+
+  def draw(g: DoctusGraphics): Unit
+
+}
+
 case class Line(
     pos: DoctusPoint,
     length: Double,
     weight: Double,
     angle: Double,
-    blur: Int) {
+    blur: Int) extends Shape {
 
   def draw(g: DoctusGraphics): Unit = {
     val vek = DoctusVector(0, length / 2.0).rot(angle)
@@ -41,12 +47,11 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
-  var lines: List[Line] = List.empty[Line]
+  var shapes: List[Shape] = List.empty[Shape]
 
   var startPoint = DoctusPoint(0, 0)
 
-  def createRandomLines(cnt: Int, size: Double, off: DoctusVector): List[Line] = {
-
+  def createRandomLines(cnt: Int, size: Double, off: DoctusVector): List[Shape] = {
     val pi = pixImages(ran.nextInt(pixImages.size))
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
@@ -62,7 +67,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     g.fill(DoctusColorWhite, 50)
     g.rect(0, 0, canvas.width, canvas.height)
 
-    lines.foreach { l => l.draw(g) }
+    shapes.foreach { l => l.draw(g) }
   }
 
   def pointableDragged(pos: DoctusPoint): Unit = ()
@@ -76,7 +81,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
     val cnt = (size * size * 0.002).toInt
-    lines = createRandomLines(cnt, size, off)
+    shapes = createRandomLines(cnt, size, off)
     canvas.repaint()
   }
 

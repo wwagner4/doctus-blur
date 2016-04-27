@@ -51,13 +51,15 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   var startPoint = DoctusPoint(0, 0)
 
-  def createRandomLines(cnt: Int, size: Double, off: DoctusVector): List[Shape] = {
+  def createRandomLines(size: Double, off: DoctusVector): List[Shape] = {
+    //println("size:" + size)
     val pi = pixImages(ran.nextInt(pixImages.size))
+    val cnt = (size * size * 0.05).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
       val pos1 = DoctusPoint(pos.x * size, pos.y * size) + off
-      Line(pos1, 10, 1, ranAngle, 2)
+      Line(pos1, size / 50, size / 500, ranAngle, 0)
     }
   }
 
@@ -80,8 +82,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     val vec = startPoint - pos
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
-    val cnt = (size * size * 0.002).toInt
-    shapes = createRandomLines(cnt, size, off)
+    shapes = createRandomLines(size, off)
     canvas.repaint()
   }
 

@@ -9,6 +9,7 @@ sealed trait GuiState
 
 case object GS_DRAWING extends GuiState
 case class GS_MSG(msg: String) extends GuiState
+case object GS_CLEAR extends GuiState
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
@@ -74,6 +75,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
       case GS_DRAWING =>
         shapes.foreach { l => l.draw(g) }
       case GS_MSG(msg) =>
+        drawWhiteBackground(g)
         val txtSize = 30
         val txtWidth = msg.size * txtSize * 0.5
         val txtHeight = txtSize * 1.3
@@ -86,12 +88,15 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
         g.fill(DoctusColorBlack, 150)
         g.textSize(txtSize)
         g.text(msg, origin + DoctusVector(10, txtSize), 0)
+      case GS_CLEAR =>
+        drawWhiteBackground(g)
+        guiState = GS_DRAWING
     }
   }
 
   def drawWhiteBackground(g: DoctusGraphics): Unit = {
     g.noStroke()
-    g.fill(DoctusColorWhite, 50)
+    g.fill(DoctusColorWhite, 255)
     g.rect(0, 0, canvas.width, canvas.height)
   }
 
@@ -109,7 +114,17 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
     canvas.repaint()
   }
 
-  def keyPressed(code: DoctusKeyCode): Unit = ()
+  def keyPressed(code: DoctusKeyCode): Unit = {
+    guiState match {
+      case GS_DRAWING => ()
+      case GS_MSG(_) => 
+        guiState = GS_CLEAR
+        canvas.repaint()
+      case GS_CLEAR => 
+        guiState = GS_DRAWING
+        canvas.repaint()
+    }
+  }
 
 }
 

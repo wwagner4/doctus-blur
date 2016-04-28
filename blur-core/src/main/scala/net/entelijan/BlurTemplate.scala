@@ -5,6 +5,11 @@ import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
 
+sealed trait GuiState
+
+case object GS_DRAWING extends GuiState
+case class GS_MSG(msg: String) extends GuiState
+
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
 trait Shape {
@@ -43,6 +48,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
 
   override def frameRate = None
 
+  var guiState: GuiState = GS_MSG("Hit the space button to start")
+
   val ran = new java.util.Random
 
   lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
@@ -54,7 +61,6 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   def createShapes(size: Double, off: DoctusVector): List[Shape] = {
     val pi = pixImages(ran.nextInt(pixImages.size))
     val cnt = (math.pow(size, 1.3) * 0.7).toInt
-    println("s->cnt %.2f -> %d" format (size, cnt))
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
@@ -64,12 +70,26 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   }
 
   def draw(g: DoctusGraphics): Unit = {
+    guiState match {
+      case GS_DRAWING =>
+        shapes.foreach { l => l.draw(g) }
+      case GS_MSG(msg) =>
+        val origin = DoctusPoint(200, 300)
+        val txtSize = 30
+        val txtWidth = msg.size * txtSize * 0.5
+        g.fill(DoctusColorOrange, 150)
+        g.noStroke()
+        g.rect(origin, txtWidth, txtSize * 1.3)
+        g.fill(DoctusColorBlack, 150)
+        g.textSize(txtSize)
+        g.text(msg, origin + DoctusVector(10, txtSize), 0)
+    }
+  }
 
-//    g.noStroke()
-//    g.fill(DoctusColorWhite, 50)
-//    g.rect(0, 0, canvas.width, canvas.height)
-
-    shapes.foreach { l => l.draw(g) }
+  def drawWhiteBackground(g: DoctusGraphics): Unit = {
+    g.noStroke()
+    g.fill(DoctusColorWhite, 50)
+    g.rect(0, 0, canvas.width, canvas.height)
   }
 
   def pointableDragged(pos: DoctusPoint): Unit = ()

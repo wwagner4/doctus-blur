@@ -75,23 +75,27 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
       case GS_DRAWING =>
         shapes.foreach { l => l.draw(g) }
       case GS_MSG(msg) =>
-        drawWhiteBackground(g)
-        val txtSize = 30
-        val txtWidth = msg.size * txtSize * 0.5
-        val txtHeight = txtSize * 1.3
-        val xoff = (canvas.width - txtWidth) * 0.5
-        val yoff = (canvas.height - txtHeight) * 0.5
-        val origin = DoctusPoint(xoff, yoff)
-        g.fill(DoctusColorOrange, 50)
-        g.noStroke()
-        g.rect(origin, txtWidth, txtHeight)
-        g.fill(DoctusColorBlack, 150)
-        g.textSize(txtSize)
-        g.text(msg, origin + DoctusVector(10, txtSize), 0)
+        drawTextBox(g, msg)
       case GS_CLEAR =>
         drawWhiteBackground(g)
         guiState = GS_DRAWING
     }
+  }
+
+  def drawTextBox(g: DoctusGraphics, msg: String): Unit = {
+    drawWhiteBackground(g)
+    val txtSize = 50
+    val txtWidth = msg.size * txtSize * 0.5
+    val txtHeight = txtSize * 1.3
+    val xoff = (canvas.width - txtWidth) * 0.5
+    val yoff = (canvas.height - txtHeight) * 0.5
+    val origin = DoctusPoint(xoff, yoff)
+    g.fill(DoctusColorOrange, 200)
+    g.noStroke()
+    g.rect(origin, txtWidth, txtHeight)
+    g.fill(DoctusColorBlack, 150)
+    g.textSize(txtSize)
+    g.text(msg, origin + DoctusVector(10, txtSize), 0)
   }
 
   def drawWhiteBackground(g: DoctusGraphics): Unit = {
@@ -117,10 +121,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   def keyPressed(code: DoctusKeyCode): Unit = {
     guiState match {
       case GS_DRAWING => ()
-      case GS_MSG(_) => 
+      case GS_MSG(_) =>
         guiState = GS_CLEAR
         canvas.repaint()
-      case GS_CLEAR => 
+      case GS_CLEAR =>
         guiState = GS_DRAWING
         canvas.repaint()
     }

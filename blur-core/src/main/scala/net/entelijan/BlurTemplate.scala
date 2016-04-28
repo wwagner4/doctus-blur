@@ -74,12 +74,15 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
       case GS_DRAWING =>
         shapes.foreach { l => l.draw(g) }
       case GS_MSG(msg) =>
-        val origin = DoctusPoint(200, 300)
         val txtSize = 30
         val txtWidth = msg.size * txtSize * 0.5
-        g.fill(DoctusColorOrange, 150)
+        val txtHeight = txtSize * 1.3
+        val xoff = (canvas.width - txtWidth) * 0.5
+        val yoff = (canvas.height - txtHeight) * 0.5
+        val origin = DoctusPoint(xoff, yoff)
+        g.fill(DoctusColorOrange, 50)
         g.noStroke()
-        g.rect(origin, txtWidth, txtSize * 1.3)
+        g.rect(origin, txtWidth, txtHeight)
         g.fill(DoctusColorBlack, 150)
         g.textSize(txtSize)
         g.text(msg, origin + DoctusVector(10, txtSize), 0)

@@ -5,7 +5,7 @@ package net.entelijan
   */
 object ImgPersistorScalajs extends ImgPersitor {
 
-  override def save(data: ImgData): Unit = {
+  override def save(data: ImgData): Int = {
     throw new IllegalStateException("Not yet implemented")
   }
 

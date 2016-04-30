@@ -19,7 +19,11 @@ case class ImgEvent(x: Double, y: Double, size: Double)
 
 trait ImgPersitor {
 
-  def save(data: ImgData)
+  /**
+    * Saves the image data and returns the id
+    * for loading that data
+    */
+  def save(data: ImgData): Int
 
   def load(id: Int): ImgData
 }

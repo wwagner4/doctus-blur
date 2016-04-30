@@ -36,8 +36,6 @@ object BlurJvm extends App {
 
       val sched = DoctusSchedulerJvm
       val canvas = DoctusTemplateCanvasFx(canvasFx)
-      val img = DoctusImageFx("logo.png")
-
 
       val grp = new Group()
       grp.getChildren.add(canvasFx)

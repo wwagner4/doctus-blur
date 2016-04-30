@@ -12,7 +12,7 @@ object ImgPersistorJvm extends ImgPersitor {
   val dir = createOrOpenDir(".blur")
 
 
-  override def save(data: ImgData): Unit = {
+  override def save(data: ImgData): Int = {
     def usedIds: Seq[Int] = {
       val Pattern = """img(.d).txt""".r
       dir.list().flatMap { fnam =>
@@ -56,6 +56,7 @@ object ImgPersistorJvm extends ImgPersitor {
     val dataStr: String = write(data)
 
     writeToFile(id, dataStr)
+    id
   }
 
   override def load(id: Int): ImgData = {

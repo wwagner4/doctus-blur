@@ -5,12 +5,6 @@ import doctus.core.util._
 import doctus.core.template._
 import doctus.core.color._
 
-sealed trait GuiState
-
-case object GS_DRAWING extends GuiState
-case class GS_MSG(msg: String) extends GuiState
-case object GS_CLEAR extends GuiState
-
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
 case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
@@ -21,6 +15,12 @@ case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
 }
 
 case class ImgEvent(x: Double, y: Double, size: Double)
+
+sealed trait BlurMode
+
+case object BM_DRAW extends BlurMode
+case class BM_REDRAW(id: Int) extends BlurMode
+
 
 trait ImgPersitor {
 
@@ -65,7 +65,14 @@ case class Line(
 
 }
 
-case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers: ImgPersitor) extends DoctusTemplate {
+case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers: ImgPersitor, mode: BlurMode) extends DoctusTemplate {
+
+  sealed trait GuiState
+
+  case object GS_DRAWING extends GuiState
+  case class GS_MSG(msg: String) extends GuiState
+  case object GS_CLEAR extends GuiState
+  case class GS_LOAD(id: Int) extends GuiState
 
   override def frameRate = None
 
@@ -106,6 +113,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       case GS_CLEAR =>
         drawWhiteBackground(g)
         guiState = GS_DRAWING
+      case GS_LOAD(id) =>
+        println("LOAD not impl")
     }
   }
 
@@ -159,6 +168,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       case GS_CLEAR =>
         guiState = GS_DRAWING
         canvas.repaint()
+      case GS_LOAD(id) =>
+        println("LOAD not impl")
     }
   }
 

@@ -1,9 +1,9 @@
 package net.entelijan
 
 import doctus.core._
-import doctus.core.util._
-import doctus.core.template._
 import doctus.core.color._
+import doctus.core.template._
+import doctus.core.util._
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
@@ -181,8 +181,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       case GS_CLEAR =>
         guiState = GS_DRAWING
         canvas.repaint()
-      case GS_LOAD(id) =>
-        println("LOAD not impl")
+      case GS_LOAD(id) => // Nothing to do here
     }
   }
 

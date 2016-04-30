@@ -13,23 +13,11 @@ object ImgPersistorJvm extends ImgPersitor {
 
 
   override def save(data: ImgData): Int = {
-    def usedIds: Seq[Int] = {
-      val Pattern = """img(.d).txt""".r
-      dir.list().flatMap { fnam =>
-        try {
-          fnam match {
-            case Pattern(numStr) => Some(numStr.toInt)
-            case _ => None
-          }
-        } catch {
-          case _: Exception => None
-        }
-      }
 
-    }
+
 
     def nextId: Int = {
-      val ids: Seq[Int] = usedIds
+      val ids: Seq[Int] = IdExtractor.ids(dir.list())
       if (ids.isEmpty) 0
       else ids.max + 1
     }
@@ -76,5 +64,25 @@ object ImgPersistorJvm extends ImgPersitor {
     dir
   }
 
+
+}
+
+object IdExtractor {
+
+  val Pattern = """img(\d*).txt""".r
+
+  def ids(names: Iterable[String]): Seq[Int] = {
+
+    names.flatMap { fnam =>
+      try {
+        fnam match {
+          case Pattern(numStr) => Some(numStr.toInt)
+          case _ => None
+        }
+      } catch {
+        case _: Exception => None
+      }
+    }.toSeq
+  }
 
 }

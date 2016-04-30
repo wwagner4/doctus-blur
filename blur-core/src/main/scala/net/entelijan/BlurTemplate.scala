@@ -74,7 +74,14 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   var startPoint = DoctusPoint(0, 0)
 
-  def createShapes(size: Double, off: DoctusVector): List[Shape] = {
+  var imgData: ImgData = createNewImageData
+
+  private def createNewImageData: ImgData = {
+    val ratio = canvas.width.toDouble / canvas.height
+    ImgData(ratio, Seq.empty[ImgEvent])
+  }
+
+  private def createShapes(size: Double, off: DoctusVector): List[Shape] = {
     val pi = pixImages(ran.nextInt(pixImages.size))
     val cnt = (math.pow(size, 1.3) * 0.7).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
@@ -135,8 +142,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   def keyPressed(code: DoctusKeyCode): Unit = {
     guiState match {
-      case GS_DRAWING => 
-        guiState = GS_MSG("Saved to ???")
+      case GS_DRAWING =>
+        val id = pers.save(imgData)
+        imgData = createNewImageData
+        guiState = GS_MSG("Saved to %d" format id)
         canvas.repaint()
       case GS_MSG(_) =>
         guiState = GS_CLEAR

@@ -2,7 +2,6 @@ lazy val _scalaVersion = "2.11.8"
 lazy val doctusVersion = "1.0.6-SNAPSHOT"
 lazy val mockitoVersion = "1.9.5"
 lazy val utestVersion = "0.4.1"
-lazy val scalaJsDomJqueryVersion = "0.9.0"
 
 lazy val commonSettings = 
   Seq(
@@ -29,23 +28,13 @@ lazy val jvmSettings =
       fork := true,
       testFrameworks += new TestFramework("utest.runner.Framework"))
 
-lazy val scalajsSettings =
-  commonSettings ++
-    Seq(
-      jsDependencies += RuntimeDOM,
-      libraryDependencies += "org.scala-js" %%% "scalajs-dom" % scalaJsDomJqueryVersion,
-      libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % scalaJsDomJqueryVersion,
-      libraryDependencies += "net.entelijan" %%% "doctus-scalajs" % doctusVersion,
-      testFrameworks += new TestFramework("utest.runner.Framework"))
-
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .settings(
     name := "blur-root")
   .aggregate(
     core,
-    jvm,
-    scalajs)
+    jvm)
 
 lazy val core = (project in file("blur-core"))
   .settings(coreSettings: _*)
@@ -59,10 +48,4 @@ lazy val jvm = (project in file("blur-jvm"))
     name := "blur-jvm")
   .dependsOn(core)
 
-lazy val scalajs = (project in file("blur-scalajs"))
-  .settings(scalajsSettings: _*)
-  .settings(
-    name := "blur-scalajs")
-  .dependsOn(core)
-  .enablePlugins(ScalaJSPlugin)
 

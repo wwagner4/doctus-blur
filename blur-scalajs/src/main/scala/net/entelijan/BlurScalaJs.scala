@@ -16,9 +16,10 @@ object BlurScalaJs {
 
     val canvas = DoctusTemplateCanvasScalajs(canvasElem)
     val sched = DoctusSchedulerScalajs
+    val pers = ImgPersistorScalajs
 
     // Common to all platforms
-    val templ = net.entelijan.BlurDoctusTemplate(canvas, sched)
+    val templ = net.entelijan.BlurDoctusTemplate(canvas, sched, pers)
     DoctusTemplateController(templ, sched, canvas)
 
 

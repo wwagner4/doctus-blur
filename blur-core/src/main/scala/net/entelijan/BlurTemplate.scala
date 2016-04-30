@@ -13,6 +13,17 @@ case object GS_CLEAR extends GuiState
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
+case class ImgData(ratio: Double, events: Seq[ImgEvent])
+
+case class ImgEvent(x: Double, y: Double, size: Double)
+
+trait ImgPersitor {
+
+  def save(data: ImgData)
+
+  def load(id: Int): ImgData
+}
+
 trait Shape {
 
   def draw(g: DoctusGraphics): Unit
@@ -45,7 +56,7 @@ case class Line(
 
 }
 
-case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) extends DoctusTemplate {
+case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers: ImgPersitor) extends DoctusTemplate {
 
   override def frameRate = None
 

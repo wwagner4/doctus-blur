@@ -46,9 +46,10 @@ object BlurJvm extends App {
       val scene = new Scene(grp, width, height, bgCol)
       canvasFx.widthProperty().bind(scene.widthProperty())
       canvasFx.heightProperty().bind(scene.heightProperty())
+      val pers = ImgPersistorJvm
 
       // Common to all platforms
-      val templ = BlurDoctusTemplate(canvas, sched)
+      val templ = BlurDoctusTemplate(canvas, sched, pers)
       DoctusTemplateController(templ, sched, canvas)
 
       stage.setScene(scene)

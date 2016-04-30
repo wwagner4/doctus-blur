@@ -13,7 +13,12 @@ case object GS_CLEAR extends GuiState
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
-case class ImgData(ratio: Double, events: Seq[ImgEvent])
+case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
+  def addEvent(event: ImgEvent): ImgData = {
+    val newEvents = events :+ event
+    this.copy(events = newEvents)
+  }
+}
 
 case class ImgEvent(x: Double, y: Double, size: Double)
 
@@ -137,6 +142,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
     shapes = createShapes(size, off)
+    imgData = imgData.addEvent(ImgEvent(off.x, off.y, size))
     canvas.repaint()
   }
 

@@ -1,28 +1,19 @@
 package net.entelijan
 
-import doctus.jvm._
-import doctus.core.template._
-import doctus.core._
-import java.util.ArrayList
-import java.util.List
-import java.util.Random
 import javafx.application.Application
+import javafx.event.{Event, EventHandler}
 import javafx.scene._
-import javafx.stage.Stage
 import javafx.scene.canvas.Canvas
-import javafx.application._
-import javafx.scene._
 import javafx.scene.paint._
 import javafx.stage.Stage
-import javafx.stage.WindowEvent
-import javafx.event.EventHandler
-import javafx.event.ActionEvent
-import javafx.event.Event
+
+import doctus.core.template._
+import doctus.jvm._
 
 object BlurJvmRedraw extends App {
 
   class BlurAppRedraw extends BlurApp {
-    def mode = BM_REDRAW(7)
+    def mode = BM_REDRAW(9)
   }
 
   Application.launch(classOf[BlurAppRedraw], args: _*)

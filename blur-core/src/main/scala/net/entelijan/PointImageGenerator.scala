@@ -36,8 +36,8 @@ object PointImageGenerator extends {
 
     if (cnt == 0) points
     else {
-      val x = ran();
-      val y = ran();
+      val x = ran()
+      val y = ran()
       if (isPoint(x, y, img)) {
         val r = img.width.toDouble / img.height
         val p =

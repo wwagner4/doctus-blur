@@ -23,7 +23,7 @@ import javafx.event.Event
 
 object BlurJvm extends App {
 
-  Application.launch(classOf[MyApp], args: _*);
+  Application.launch(classOf[MyApp], args: _*)
 
   class MyApp extends Application {
 
@@ -32,18 +32,18 @@ object BlurJvm extends App {
       val width = 1000
       val height = 520
 
-      val canvasFx = new Canvas();
+      val canvasFx = new Canvas()
 
       val sched = DoctusSchedulerJvm
       val canvas = DoctusTemplateCanvasFx(canvasFx)
       val img = DoctusImageFx("logo.png")
 
 
-      val grp = new Group();
-      grp.getChildren().add(canvasFx);
+      val grp = new Group()
+      grp.getChildren.add(canvasFx)
 
-      val bgCol = Color.WHITE;
-      val scene = new Scene(grp, width, height, bgCol);
+      val bgCol = Color.WHITE
+      val scene = new Scene(grp, width, height, bgCol)
       canvasFx.widthProperty().bind(scene.widthProperty())
       canvasFx.heightProperty().bind(scene.heightProperty())
 
@@ -51,9 +51,9 @@ object BlurJvm extends App {
       val templ = BlurDoctusTemplate(canvas, sched)
       DoctusTemplateController(templ, sched, canvas)
 
-      stage.setScene(scene);
+      stage.setScene(scene)
 
-      stage.show();
+      stage.show()
 
       def handler[T <: Event](h: (T => Unit)): EventHandler[T] =
         new EventHandler[T] {

@@ -85,7 +85,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler) exten
   def drawTextBox(g: DoctusGraphics, msg: String): Unit = {
     drawWhiteBackground(g)
     val txtSize = 50
-    val txtWidth = msg.size * txtSize * 0.6
+    val txtWidth = msg.length * txtSize * 0.6
     val txtHeight = txtSize * 1.3
     val xoff = (canvas.width - txtWidth) * 0.5
     val yoff = (canvas.height - txtHeight) * 0.5

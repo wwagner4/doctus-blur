@@ -6,3 +6,4 @@ bin/
 .cache*
 work/
 .DS_Store
+.idea/

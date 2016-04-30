@@ -13,7 +13,7 @@ object PixImageGenerator {
   def createPixImage(imgStream: InputStream): PixImage = {
     val bi: BufferedImage = ImageIO.read(imgStream)
     val pixels = for (x <- 0 until bi.getWidth; y <- 0 until bi.getHeight) yield {
-      val color = bi.getRGB(x, y);
+      val color = bi.getRGB(x, y)
       val red = (color >>> 16) & 0xFF
       val green = (color >>> 8) & 0xFF
       val blue = (color >>> 0) & 0xFF

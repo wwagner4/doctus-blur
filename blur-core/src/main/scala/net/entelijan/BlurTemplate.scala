@@ -19,6 +19,7 @@ case class ImgEvent(x: Double, y: Double, size: Double)
 sealed trait BlurMode
 
 case object BM_DRAW extends BlurMode
+
 case class BM_REDRAW(id: Int) extends BlurMode
 
 
@@ -40,11 +41,11 @@ trait Shape {
 }
 
 case class Line(
-    pos: DoctusPoint,
-    length: Double,
-    weight: Double,
-    angle: Double,
-    blur: Int) extends Shape {
+                 pos: DoctusPoint,
+                 length: Double,
+                 weight: Double,
+                 angle: Double,
+                 blur: Int) extends Shape {
 
   def draw(g: DoctusGraphics): Unit = {
     val vek = DoctusVector(0, length / 2.0).rot(angle)
@@ -70,13 +71,20 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
   sealed trait GuiState
 
   case object GS_DRAWING extends GuiState
+
   case class GS_MSG(msg: String) extends GuiState
+
   case object GS_CLEAR extends GuiState
+
   case class GS_LOAD(id: Int) extends GuiState
 
   override def frameRate = None
 
-  var guiState: GuiState = GS_MSG("Hit the space button to start")
+  var guiState: GuiState = mode match {
+    case BM_DRAW => GS_MSG("Hit the space button to start")
+    case BM_REDRAW(id) => GS_LOAD(id)
+  }
+
 
   val ran = new java.util.Random
 
@@ -114,7 +122,12 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         drawWhiteBackground(g)
         guiState = GS_DRAWING
       case GS_LOAD(id) =>
-        println("LOAD not impl")
+        drawWhiteBackground(g)
+        val data = pers.load(id)
+        data.events.foreach{evt =>
+          shapes = createShapes(evt.size, DoctusVector(evt.x, evt.y))
+          shapes.foreach { l => l.draw(g) }
+        }
     }
   }
 

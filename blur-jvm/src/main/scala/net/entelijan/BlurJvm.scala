@@ -22,7 +22,7 @@ import javafx.event.Event
 object BlurJvmRedraw extends App {
 
   class BlurAppRedraw extends BlurApp {
-    def mode = BM_REDRAW(8)
+    def mode = BM_REDRAW(7)
   }
 
   Application.launch(classOf[BlurAppRedraw], args: _*)

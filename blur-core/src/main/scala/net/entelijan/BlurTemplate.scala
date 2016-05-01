@@ -8,6 +8,7 @@ import doctus.core.util._
 sealed trait DrawDirection
 
 case object DD_LeftToRight extends DrawDirection
+
 case object DD_RightToLeft extends DrawDirection
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
@@ -113,7 +114,11 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
       val xoff = if (pir < 1) 0.5 * pir else 0.5
-      val pos1 = DoctusPoint((pos.x - xoff) * size, pos.y * size) + off
+      val x =
+        if (dir == DD_LeftToRight) pos.x
+        else if (pir < 1) pir - pos.x
+        else 1.0 - pos.x
+      val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
       Line(pos1, size / 50, size / 500, ranAngle, 0)
     }
   }
@@ -142,7 +147,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
           val si = evt.size * yscale
           val x = evt.x * xscale + xoff
           val y = evt.y * yscale + yoff
-          shapes = createShapes(si, DoctusVector(x, y), DD_LeftToRight)
+          shapes = createShapes(si, DoctusVector(x, y), DD_RightToLeft)
           shapes.foreach { l => l.draw(g) }
         }
     }
@@ -180,7 +185,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val vec = startPoint - pos
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
-    shapes = createShapes(size, off, DD_LeftToRight)
+    val dir =
+      if (startPoint.x > pos.x) DD_LeftToRight
+      else DD_RightToLeft
+    shapes = createShapes(size, off, dir)
     imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size)
     canvas.repaint()
   }

@@ -88,7 +88,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   private val ran = new java.util.Random
 
-  private lazy val pixImages = List(PixImageHolder.img0004)
+  private lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
   private var shapes: List[Shape] = List.empty[Shape]
 

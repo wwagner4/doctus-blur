@@ -13,7 +13,7 @@ import doctus.jvm._
 object BlurJvmRedraw extends App {
 
   class BlurAppRedraw extends BlurApp {
-    def mode = BM_REDRAW(2)
+    def mode = BM_REDRAW(3)
     val width = 1000
     val height = 600
   }

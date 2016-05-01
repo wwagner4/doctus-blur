@@ -13,7 +13,9 @@ import doctus.jvm._
 object BlurJvmRedraw extends App {
 
   class BlurAppRedraw extends BlurApp {
-    def mode = BM_REDRAW(9)
+    def mode = BM_REDRAW(2)
+    val width = 1000
+    val height = 600
   }
 
   Application.launch(classOf[BlurAppRedraw], args: _*)
@@ -23,6 +25,8 @@ object BlurJvmDraw extends App {
 
   class BlurAppDraw extends BlurApp {
     def mode = BM_DRAW
+    val width = 1000
+    val height = 600
   }
 
   Application.launch(classOf[BlurAppDraw], args: _*)
@@ -31,11 +35,11 @@ object BlurJvmDraw extends App {
 trait BlurApp extends Application {
 
   def mode: BlurMode
+  def width: Int
+  def height: Int
 
   override def start(stage: Stage) {
 
-    val width = 1000
-    val height = 520
 
     val canvasFx = new Canvas()
 

@@ -94,11 +94,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   var startPoint = DoctusPoint(0, 0)
 
-  var imgData: ImgData = createNewImageData
+  var imgEvents: Seq[ImgEvent] = createNewImageEvents
 
-  private def createNewImageData: ImgData = {
-    val ratio = canvas.width.toDouble / canvas.height
-    ImgData(ratio, Seq.empty[ImgEvent])
+  private def createNewImageEvents: Seq[ImgEvent] = {
+    List.empty[ImgEvent]
   }
 
   private def createShapes(size: Double, off: DoctusVector): List[Shape] = {
@@ -122,10 +121,15 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         drawWhiteBackground(g)
         guiState = GS_DRAWING
       case GS_LOAD(id) =>
-        drawWhiteBackground(g)
         val data = pers.load(id)
-        data.events.foreach{evt =>
-          shapes = createShapes(evt.size, DoctusVector(evt.x, evt.y))
+        val w = canvas.width
+        val h = canvas.height
+        val r = w.toDouble / h
+        val (scale, xoff, yoff) = if (data.ratio > r) (w, 0.0, (h - w / data.ratio) * 0.5)
+        else (h, (w - h * data.ratio) * 0.5, 0.0)
+        drawWhiteBackground(g)
+        data.events.foreach { evt =>
+          shapes = createShapes(evt.size * scale, DoctusVector(evt.x * scale + xoff, evt.y * scale + yoff))
           shapes.foreach { l => l.draw(g) }
         }
     }
@@ -164,15 +168,29 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
     shapes = createShapes(size, off)
-    imgData = imgData.addEvent(ImgEvent(off.x, off.y, size))
+    imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size)
     canvas.repaint()
+  }
+
+  def createImgData: ImgData = {
+    val w = canvas.width
+    val h = canvas.height
+    val events = this.imgEvents.map { e =>
+      val s = e.size / h
+      val x = e.x / w
+      val y = e.y / h
+      ImgEvent(x, y, s)
+    }
+    val r = w.toDouble / h
+    ImgData(r, events)
   }
 
   def keyPressed(code: DoctusKeyCode): Unit = {
     guiState match {
       case GS_DRAWING =>
+        val imgData = createImgData
         val id = pers.save(imgData)
-        imgData = createNewImageData
+        imgEvents = createNewImageEvents
         guiState = GS_MSG("Saved to %d" format id)
         canvas.repaint()
       case GS_MSG(_) =>

@@ -133,7 +133,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         drawWhiteBackground(g)
         guiState = GS_DRAWING
       case GS_LOAD(id) =>
-        val data = pers.load(id)
+        println("loading data")
+          val data = pers.load(id)
         val w = canvas.width.toDouble
         val h = canvas.height.toDouble
         val r = w / h
@@ -148,6 +149,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
           val x = evt.x * xscale + xoff
           val y = evt.y * yscale + yoff
           shapes = createShapes(si, DoctusVector(x, y), evt.direction)
+          println("writing shapes")
           shapes.foreach { l => l.draw(g) }
         }
     }

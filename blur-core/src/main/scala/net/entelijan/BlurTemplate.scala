@@ -5,6 +5,11 @@ import doctus.core.color._
 import doctus.core.template._
 import doctus.core.util._
 
+sealed trait DrawDirection
+
+case object DD_LeftToRight extends DrawDirection
+case object DD_RightToLeft extends DrawDirection
+
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
 case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
@@ -100,14 +105,14 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     List.empty[ImgEvent]
   }
 
-  private def createShapes(size: Double, off: DoctusVector): List[Shape] = {
+  private def createShapes(size: Double, off: DoctusVector, dir: DrawDirection): List[Shape] = {
     val pi = pixImages(ran.nextInt(pixImages.size))
+    val pir = pi.width.toDouble / pi.height
     val cnt = (math.pow(size, 1.3) * 0.7).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
-      val r = pi.width.toDouble / pi.height
-      val xoff = if (r < 1) 0.5 * r else 0.5
+      val xoff = if (pir < 1) 0.5 * pir else 0.5
       val pos1 = DoctusPoint((pos.x - xoff) * size, pos.y * size) + off
       Line(pos1, size / 50, size / 500, ranAngle, 0)
     }
@@ -134,7 +139,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         }
         drawWhiteBackground(g)
         data.events.foreach { evt =>
-          shapes = createShapes(evt.size * yscale, DoctusVector(evt.x * xscale + xoff, evt.y * yscale + yoff))
+          val si = evt.size * yscale
+          val x = evt.x * xscale + xoff
+          val y = evt.y * yscale + yoff
+          shapes = createShapes(si, DoctusVector(x, y), DD_LeftToRight)
           shapes.foreach { l => l.draw(g) }
         }
     }
@@ -172,7 +180,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val vec = startPoint - pos
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
-    shapes = createShapes(size, off)
+    shapes = createShapes(size, off, DD_LeftToRight)
     imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size)
     canvas.repaint()
   }

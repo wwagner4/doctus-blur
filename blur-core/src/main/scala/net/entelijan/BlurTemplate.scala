@@ -80,21 +80,21 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   override def frameRate = None
 
-  var guiState: GuiState = mode match {
+  private var guiState: GuiState = mode match {
     case BM_DRAW => GS_MSG("Hit the space button to start")
     case BM_REDRAW(id) => GS_LOAD(id)
   }
 
 
-  val ran = new java.util.Random
+  private val ran = new java.util.Random
 
-  lazy val pixImages = List(PixImageHolder.img0005)
+  private lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
-  var shapes: List[Shape] = List.empty[Shape]
+  private var shapes: List[Shape] = List.empty[Shape]
 
-  var startPoint = DoctusPoint(0, 0)
+  private var startPoint = DoctusPoint(0, 0)
 
-  var imgEvents: Seq[ImgEvent] = createNewImageEvents
+  private var imgEvents: Seq[ImgEvent] = createNewImageEvents
 
   private def createNewImageEvents: Seq[ImgEvent] = {
     List.empty[ImgEvent]

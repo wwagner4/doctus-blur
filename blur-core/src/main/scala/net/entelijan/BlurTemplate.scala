@@ -20,7 +20,7 @@ case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
   }
 }
 
-case class ImgEvent(x: Double, y: Double, size: Double)
+case class ImgEvent(x: Double, y: Double, size: Double, direction: DrawDirection)
 
 sealed trait BlurMode
 
@@ -147,7 +147,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
           val si = evt.size * yscale
           val x = evt.x * xscale + xoff
           val y = evt.y * yscale + yoff
-          shapes = createShapes(si, DoctusVector(x, y), DD_RightToLeft)
+          shapes = createShapes(si, DoctusVector(x, y), evt.direction)
           shapes.foreach { l => l.draw(g) }
         }
     }
@@ -189,7 +189,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       if (startPoint.x > pos.x) DD_LeftToRight
       else DD_RightToLeft
     shapes = createShapes(size, off, dir)
-    imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size)
+    imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size, dir)
     canvas.repaint()
   }
 
@@ -200,7 +200,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       val s = e.size / h
       val x = e.x / w
       val y = e.y / h
-      ImgEvent(x, y, s)
+      ImgEvent(x, y, s, e.direction)
     }
     val r = w.toDouble / h
     ImgData(r, events)

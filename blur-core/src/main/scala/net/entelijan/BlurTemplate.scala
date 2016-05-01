@@ -122,14 +122,17 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         guiState = GS_DRAWING
       case GS_LOAD(id) =>
         val data = pers.load(id)
-        val w = canvas.width
-        val h = canvas.height
-        val r = w.toDouble / h
-        val (scale, xoff, yoff) = if (data.ratio > r) (w, 0.0, (h - w / data.ratio) * 0.5)
-        else (h, (w - h * data.ratio) * 0.5, 0.0)
+        val w = canvas.width.toDouble
+        val h = canvas.height.toDouble
+        val r = w / h
+        val (xscale, yscale, xoff, yoff) = if (data.ratio > r) {
+          (w, w / data.ratio, 0.0, (h - w / data.ratio) * 0.5)
+        } else {
+          (h * data.ratio, h, (w - h * data.ratio) * 0.5, 0.0)
+        }
         drawWhiteBackground(g)
         data.events.foreach { evt =>
-          shapes = createShapes(evt.size * scale, DoctusVector(evt.x * scale + xoff, evt.y * scale + yoff))
+          shapes = createShapes(evt.size * yscale, DoctusVector(evt.x * xscale + xoff, evt.y * yscale + yoff))
           shapes.foreach { l => l.draw(g) }
         }
     }

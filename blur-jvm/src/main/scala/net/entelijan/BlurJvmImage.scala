@@ -16,8 +16,8 @@ object BlurJvmImageRedraw extends App {
 
   class BlurAppRedraw extends BlurImageApp {
     def mode = BM_REDRAW(0)
-    val width = 5000
-    val height = 2500
+    val width = 6000
+    val height = 3000
   }
 
   println("before launch")
@@ -31,7 +31,9 @@ trait BlurImageApp extends Application {
   def width: Int
   def height: Int
 
-  val file = new File("/Users/wwagner4/tmp/blur1.png")
+  val home = new File(System.getProperty("user.home"))
+
+  val file = new File(home, "blur1.png")
 
 
 
@@ -57,6 +59,7 @@ trait BlurImageApp extends Application {
     val bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     val biout = SwingFXUtils.fromFXImage(wi, bi)
     ImageIO.write(biout, "png", file)
+    println("wrote to '%s'" format file)
 
     System.exit(0)
   }

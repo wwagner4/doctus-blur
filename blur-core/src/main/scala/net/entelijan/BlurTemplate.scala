@@ -1,5 +1,7 @@
 package net.entelijan
 
+import java.util.Random
+
 import doctus.core._
 import doctus.core.color._
 import doctus.core.template._
@@ -94,6 +96,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   private val ran = new java.util.Random
 
+  private val imgRan: Random = new java.util.Random(20349803L)
+
   private lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
   private var shapes: List[Shape] = List.empty[Shape]
@@ -107,7 +111,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
   }
 
   private def createShapes(size: Double, off: DoctusVector, dir: DrawDirection): List[Shape] = {
-    val pi = pixImages(ran.nextInt(pixImages.size))
+    val pi = pixImages(imgRan.nextInt(pixImages.size))
     val pir = pi.width.toDouble / pi.height
     val cnt = (math.pow(size, 1.3) * 0.7).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
@@ -119,7 +123,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         else if (pir < 1) pir - pos.x
         else 1.0 - pos.x
       val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
-      Line(pos1, size / 50, size / 500, ranAngle, 0)
+      val stroke = math.max(size / 2000, 0.1)
+      Line(pos1, size / 50, stroke, ranAngle, 0)
     }
   }
 

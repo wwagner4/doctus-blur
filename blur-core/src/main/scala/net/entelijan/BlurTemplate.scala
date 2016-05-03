@@ -123,7 +123,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         else if (pir < 1) pir - pos.x
         else 1.0 - pos.x
       val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
-      val stroke = math.max(size / 2000, 0.1)
+      val stroke =  math.max(size / 2000, 0.1) - math.pow(size, 1.5) / 350000
       Line(pos1, size / 50, stroke, ranAngle, 0)
     }
   }

@@ -2,9 +2,9 @@ package net.entelijan
 
 object MathTryout extends App {
   
-  (0 to 7) foreach { x => 
-    val y = 255 * math.pow(2, -x)
-    println("%d -> %10.4f" format(x, y))
+  (0 to (5000, 50)) foreach { x =>
+    val y = math.max(x.toDouble / 2000, 0.1) - math.pow(x.toDouble, 1.5) / 350000
+    println("%10d -> %.2f" format(x, y))
   }
   
   

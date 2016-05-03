@@ -6,7 +6,6 @@ import javafx.application.Application
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene._
 import javafx.scene.canvas.Canvas
-import javafx.scene.image.WritableImage
 import javafx.stage.Stage
 import javax.imageio.ImageIO
 
@@ -17,8 +16,8 @@ object BlurJvmImageRedraw extends App {
 
   class BlurAppRedraw extends BlurImageApp {
     def mode = BM_REDRAW(0)
-    val width = 6000
-    val height = 3000
+    val width = 4000
+    val height = 2000
   }
 
   println("before launch")
@@ -56,8 +55,7 @@ trait BlurImageApp extends Application {
     DoctusTemplateController(templ, sched, canvas)
 
     println("writing file")
-    val wi0 = WritableImage
-    val wi = grp.snapshot(new SnapshotParameters(), wi0)
+    val wi = grp.snapshot(new SnapshotParameters(), null)
     val bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY)
     val biout = SwingFXUtils.fromFXImage(wi, bi)
     ImageIO.write(biout, "png", file)

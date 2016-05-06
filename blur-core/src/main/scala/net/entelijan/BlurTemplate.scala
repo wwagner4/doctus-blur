@@ -113,7 +113,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
   private def createShapes(size: Double, off: DoctusVector, dir: DrawDirection): List[Shape] = {
     val pi = pixImages(imgRan.nextInt(pixImages.size))
     val pir = pi.width.toDouble / pi.height
-    val cnt = (math.pow(size, 1.3) * 0.7).toInt
+    val cnt = (math.pow(size, 0.2) * 5000.0).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
@@ -123,8 +123,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         else if (pir < 1) pir - pos.x
         else 1.0 - pos.x
       val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
-      val stroke =  math.max(size / 2000, 0.1) - math.pow(size, 1.5) / 350000
-      Line(pos1, size / 50, stroke, ranAngle, 0)
+      val stroke =  math.max(size / 2000, 0.1)
+      Line(pos1, size / 150, stroke, ranAngle, 0)
     }
   }
 

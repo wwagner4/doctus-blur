@@ -24,6 +24,37 @@ case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
 
 case class ImgEvent(x: Double, y: Double, size: Double, direction: DrawDirection)
 
+
+sealed trait ImageSet
+
+case object IS_Giacometti extends ImageSet
+case object IS_Buddha extends ImageSet
+
+object ImageSetHolder {
+
+  def imageSet(name: ImageSet): Seq[PixImage] = {
+    name match {
+      case IS_Giacometti => List(
+        PixImageHolder.img0001,
+        PixImageHolder.img0002,
+        PixImageHolder.img0004,
+        PixImageHolder.img0005)
+      case IS_Buddha => List(
+        PixImageHolderB1.img0000,
+        PixImageHolderB1.img0001,
+        PixImageHolderB1.img0002,
+        PixImageHolderB1.img0003,
+        PixImageHolderB1.img0004,
+        PixImageHolderB1.img0005,
+        PixImageHolderB1.img0006,
+        PixImageHolderB1.img0007,
+        PixImageHolderB1.img0008,
+        PixImageHolderB1.img0009)
+    }
+  }
+
+}
+
 sealed trait BlurMode
 
 case object BM_DRAW extends BlurMode

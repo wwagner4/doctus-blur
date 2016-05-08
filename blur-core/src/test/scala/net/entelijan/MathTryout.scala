@@ -7,7 +7,7 @@ object MathTryout extends App {
     println("%10d -> %.2f" format(x, y))
   }
   
-  
-  
+
+  // silly comment added
   
 }

@@ -25,13 +25,13 @@ case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
 case class ImgEvent(x: Double, y: Double, size: Double, direction: DrawDirection)
 
 
-sealed trait ImageSet {
+sealed trait BlurConfig {
 
   def images: Seq[PixImage]
 
 }
 
-case object IS_Giacometti extends ImageSet {
+case object BC_Giacometti extends BlurConfig {
   def images = List(
     PixImageHolder.img0001,
     PixImageHolder.img0002,
@@ -39,7 +39,7 @@ case object IS_Giacometti extends ImageSet {
     PixImageHolder.img0005)
 
 }
-case object IS_Buddha extends ImageSet {
+case object BC_Buddha extends BlurConfig {
   def images = List(
     PixImageHolderB1.img0000,
     PixImageHolderB1.img0001,

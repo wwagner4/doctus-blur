@@ -39,6 +39,7 @@ case object BC_Giacometti extends BlurConfig {
     PixImageHolder.img0005)
 
 }
+
 case object BC_Buddha extends BlurConfig {
   def images = List(
     PixImageHolderB1.img0000,
@@ -56,7 +57,7 @@ case object BC_Buddha extends BlurConfig {
 
 sealed trait BlurMode
 
-case object BM_DRAW extends BlurMode
+case class BM_DRAW(cfg: BlurConfig) extends BlurMode
 
 case class BM_REDRAW(id: Int) extends BlurMode
 
@@ -118,11 +119,14 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   override def frameRate = None
 
+  var config = Option.empty[BlurConfig]
+
   private var guiState: GuiState = mode match {
-    case BM_DRAW => GS_MSG("Hit the space button to start")
+    case BM_DRAW(cfg) =>
+      config = Some(cfg)
+      GS_MSG("Hit the space button to start")
     case BM_REDRAW(id) => GS_LOAD(id)
   }
-
 
   private val ran = new java.util.Random
 
@@ -153,7 +157,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         else if (pir < 1) pir - pos.x
         else 1.0 - pos.x
       val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
-      val stroke =  math.max(size / 2000, 0.1)
+      val stroke = math.max(size / 2000, 0.1)
       Line(pos1, size / 150, stroke, ranAngle, 0)
     }
   }
@@ -169,7 +173,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         guiState = GS_DRAWING
       case GS_LOAD(id) =>
         println("loading data")
-          val data = pers.load(id)
+        val data = pers.load(id)
         val w = canvas.width.toDouble
         val h = canvas.height.toDouble
         val r = w / h

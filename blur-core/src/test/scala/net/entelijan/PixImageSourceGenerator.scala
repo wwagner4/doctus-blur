@@ -1,12 +1,14 @@
 package net.entelijan
 
-case class PixImageConfig(urlStrings: Seq[String])
+import java.io.File
+
+case class PixImageConfig(urlStrings: Seq[String], holderObjectName: String)
 
 object PixImageConfigFactory {
 
   def a1: PixImageConfig = {
     val urlStrings = List("a1/g10a.png", "a1/g11a.png", "a1/g2a.png", "a1/g4a.png", "a1/g7a.png", "a1/g9a.png")
-    PixImageConfig(urlStrings)
+    PixImageConfig(urlStrings, "PixImageHolder")
   }
 
 }
@@ -34,17 +36,45 @@ object PixImageSourceGenerator extends App {
 
   val imgModels = createImgModel(pis)
 
-  val imagesStr = formatImages(imgModels)
+  val cont = formatContents(imgModels, config)
 
-  val out = s"""package net.entelijan
+  writeToFile(cont, config)
 
-object PixImageHolder {
+
+  def writeToFile(content: String, config: PixImageConfig): Unit = {
+    def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
+      val p = new java.io.PrintWriter(f)
+      try {
+        op(p)
+      } finally {
+        p.close()
+      }
+    }
+    val nam = config.holderObjectName
+    val fileName = s"blur-core/src/main/scala/net/entelijan/$nam.scala"
+    val file = new File(fileName)
+
+    printToFile(file) { pw =>
+      pw.print(content)
+    }
+
+    val path = file.getAbsolutePath
+
+    println(s"Wrote $nam to $path")
+  }
+
+  def formatContents(imgModels: Seq[SrcImage], config: PixImageConfig): String = {
+    val imagesStr = formatImages(imgModels)
+    val holderObjectName = config.holderObjectName
+
+    s"""package net.entelijan
+
+object $holderObjectName {
 
 $imagesStr
-
 }"""
 
-  println(out)
+  }
 
   def formatImages(imgs: Seq[SrcImage]): String = {
     imgs.map { img =>
@@ -74,12 +104,12 @@ $inner
       val vals = formatVals(inner.vals)
       s"""
   private object $nam {
-$vals    
+$vals
   }   
       """
     }.mkString("")
   }
-  
+
   def formatVals(vals: Seq[SrcVal]): String = {
     vals.map { _val =>
       val nam = _val.name
@@ -100,7 +130,7 @@ $vals
   def createInnerModel(indexImg: Int, pixels: Seq[Double]): Seq[SrcInner] = {
     pixels.grouped(2000).zipWithIndex.toList.map {
       case (grp, index) =>
-        val name = s"Inner%04d_%04d" format (indexImg, index)
+        val name = s"Inner%04d_%04d" format(indexImg, index)
         val vals = createVals(grp)
         SrcInner(name, vals)
     }

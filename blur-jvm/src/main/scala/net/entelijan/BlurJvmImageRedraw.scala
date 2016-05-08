@@ -2,11 +2,6 @@ package net.entelijan
 
 import java.awt.image.BufferedImage
 import java.io.File
-import javafx.application.Application
-import javafx.embed.swing.SwingFXUtils
-import javafx.scene._
-import javafx.scene.canvas.Canvas
-import javafx.stage.Stage
 import javax.imageio.ImageIO
 
 import doctus.core.template._

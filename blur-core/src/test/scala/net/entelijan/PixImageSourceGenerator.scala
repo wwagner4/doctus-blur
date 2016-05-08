@@ -14,7 +14,7 @@ object PixImageConfigFactory {
   def b1: PixImageConfig = {
     val dir = new File("blur-core/src/main/resources/b1")
     require(dir.exists() && dir.isDirectory)
-    val urlStrings = dir.list().map { nam => s"b1/$nam" }.filter(nam => nam.endsWith("JPG"))
+    val urlStrings = dir.list().map { nam => s"b1/$nam" }.filter(nam => nam.endsWith("png"))
     PixImageConfig(urlStrings, "PixImageHolderB1")
   }
 

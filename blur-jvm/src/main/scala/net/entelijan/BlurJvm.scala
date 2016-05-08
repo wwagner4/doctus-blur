@@ -24,7 +24,7 @@ object BlurJvmRedraw extends App {
 object BlurJvmDraw extends App {
 
   class BlurAppDraw extends BlurApp {
-    def mode = BM_DRAW(BC_Buddha)
+    def mode = BM_DRAW(BC_Giacometti)
     val width = 1000
     val height = 600
   }

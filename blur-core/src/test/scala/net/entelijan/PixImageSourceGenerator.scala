@@ -13,7 +13,7 @@ object PixImageConfigFactory {
 
 object PixImageSourceGenerator extends App {
 
-  val urlStrings = List("a1/g10a.png", "a1/g11a.png", "a1/g2a.png", "a1/g4a.png", "a1/g7a.png", "a1/g9a.png")
+  val config = PixImageConfigFactory.a1
 
   case class SrcVal(name: String, pixels: Seq[Double])
 
@@ -21,7 +21,7 @@ object PixImageSourceGenerator extends App {
 
   case class SrcImage(name: String, width: Int, height: Int, inners: Seq[SrcInner])
 
-  def createPixImages(urlStrings: Seq[String]): Seq[PixImage] = urlStrings map { urlStr =>
+  def createPixImages(config: PixImageConfig): Seq[PixImage] = config.urlStrings map { urlStr =>
     val url = getClass.getClassLoader.getResource(urlStr)
     require(url != null, "resource '%s' does not exist" format urlStr)
     val in = url.openStream()
@@ -30,7 +30,7 @@ object PixImageSourceGenerator extends App {
     pi
   }
 
-  val pis = createPixImages(urlStrings)
+  val pis = createPixImages(config)
 
   val imgModels = createImgModel(pis)
 

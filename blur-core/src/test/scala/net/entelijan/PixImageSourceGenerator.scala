@@ -2,7 +2,7 @@ package net.entelijan
 
 import java.io.File
 
-case class PixImageConfig(urlStrings: Seq[String], holderObjectName: String)
+case class PixImageConfig(urlStrings: Iterable[String], holderObjectName: String)
 
 object PixImageConfigFactory {
 
@@ -23,7 +23,7 @@ object PixImageSourceGenerator extends App {
 
   case class SrcImage(name: String, width: Int, height: Int, inners: Seq[SrcInner])
 
-  def createPixImages(config: PixImageConfig): Seq[PixImage] = config.urlStrings map { urlStr =>
+  def createPixImages(config: PixImageConfig): Iterable[PixImage] = config.urlStrings map { urlStr =>
     val url = getClass.getClassLoader.getResource(urlStr)
     require(url != null, "resource '%s' does not exist" format urlStr)
     val in = url.openStream()
@@ -63,7 +63,7 @@ object PixImageSourceGenerator extends App {
     println(s"Wrote $nam to $path")
   }
 
-  def formatContents(imgModels: Seq[SrcImage], config: PixImageConfig): String = {
+  def formatContents(imgModels: Iterable[SrcImage], config: PixImageConfig): String = {
     val imagesStr = formatImages(imgModels)
     val holderObjectName = config.holderObjectName
 
@@ -76,7 +76,7 @@ $imagesStr
 
   }
 
-  def formatImages(imgs: Seq[SrcImage]): String = {
+  def formatImages(imgs: Iterable[SrcImage]): String = {
     imgs.map { img =>
       val nam = img.name
       val w = img.width
@@ -118,7 +118,7 @@ $vals
     }.mkString("\n")
   }
 
-  def createImgModel(pixImages: Seq[PixImage]): Seq[SrcImage] = {
+  def createImgModel(pixImages: Iterable[PixImage]): Iterable[SrcImage] = {
     pixImages.zipWithIndex.map {
       case (pi, index) =>
         val name = s"img%04d" format index

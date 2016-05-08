@@ -15,7 +15,7 @@ case object DD_RightToLeft extends DrawDirection
 
 case class PixImage(width: Int, height: Int, pixels: Seq[Double])
 
-case class ImgData(ratio: Double, events: Seq[ImgEvent]) {
+case class ImgData(ratio: Double, events: Seq[ImgEvent], cfg: BlurConfig) {
   def addEvent(event: ImgEvent): ImgData = {
     val newEvents = events :+ event
     this.copy(events = newEvents)
@@ -107,15 +107,23 @@ case class Line(
 
 case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers: ImgPersitor, mode: BlurMode) extends DoctusTemplate {
 
-  sealed trait GuiState
+  sealed trait GuiState {
 
-  case object GS_DRAWING extends GuiState
+    def config: BlurConfig
 
-  case class GS_MSG(msg: String) extends GuiState
+  }
 
-  case object GS_CLEAR extends GuiState
+  case class GS_DRAWING(config: BlurConfig) extends GuiState
 
-  case class GS_LOAD(id: Int) extends GuiState
+  case class GS_MSG(msg: String, config: BlurConfig) extends GuiState
+
+  case class GS_CLEAR(config: BlurConfig) extends GuiState
+
+  case class GS_LOAD(id: Int) extends GuiState {
+
+    def config: BlurConfig = throw new IllegalStateException("config not defined in GS_LOAD")
+
+  }
 
   override def frameRate = None
 
@@ -124,15 +132,13 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
   private var guiState: GuiState = mode match {
     case BM_DRAW(cfg) =>
       config = Some(cfg)
-      GS_MSG("Hit the space button to start")
+      GS_MSG("Hit the space button to start", cfg)
     case BM_REDRAW(id) => GS_LOAD(id)
   }
 
   private val ran = new java.util.Random
 
   private val imgRan: Random = new java.util.Random(20349803L)
-
-  private lazy val pixImages = List(PixImageHolder.img0001, PixImageHolder.img0002, PixImageHolder.img0004, PixImageHolder.img0005)
 
   private var shapes: List[Shape] = List.empty[Shape]
 
@@ -144,7 +150,8 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     List.empty[ImgEvent]
   }
 
-  private def createShapes(size: Double, off: DoctusVector, dir: DrawDirection): List[Shape] = {
+  private def createShapes(size: Double, off: DoctusVector, dir: DrawDirection, config: BlurConfig): List[Shape] = {
+    val pixImages = config.images
     val pi = pixImages(imgRan.nextInt(pixImages.size))
     val pir = pi.width.toDouble / pi.height
     val cnt = (math.pow(size, 0.2) * 5000.0).toInt
@@ -164,16 +171,16 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
 
   def draw(g: DoctusGraphics): Unit = {
     guiState match {
-      case GS_DRAWING =>
+      case GS_DRAWING(_) =>
         shapes.foreach { l => l.draw(g) }
-      case GS_MSG(msg) =>
+      case GS_MSG(msg, _) =>
         drawTextBox(g, msg)
-      case GS_CLEAR =>
+      case GS_CLEAR(cfg) =>
         drawWhiteBackground(g)
-        guiState = GS_DRAWING
+        guiState = GS_DRAWING(cfg)
       case GS_LOAD(id) =>
         println("loading data")
-        val data = pers.load(id)
+        val data: ImgData = pers.load(id)
         val w = canvas.width.toDouble
         val h = canvas.height.toDouble
         val r = w / h
@@ -187,7 +194,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
           val si = evt.size * yscale
           val x = evt.x * xscale + xoff
           val y = evt.y * yscale + yoff
-          shapes = createShapes(si, DoctusVector(x, y), evt.direction)
+          shapes = createShapes(si, DoctusVector(x, y), evt.direction, data.cfg)
           println("writing shapes")
           shapes.foreach { l => l.draw(g) }
         }
@@ -229,7 +236,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val dir =
       if (startPoint.x > pos.x) DD_LeftToRight
       else DD_RightToLeft
-    shapes = createShapes(size, off, dir)
+    shapes = createShapes(size, off, dir, guiState.config)
     imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size, dir)
     canvas.repaint()
   }
@@ -244,22 +251,22 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       ImgEvent(x, y, s, e.direction)
     }
     val r = w.toDouble / h
-    ImgData(r, events)
+    ImgData(r, events, guiState.config)
   }
 
   def keyPressed(code: DoctusKeyCode): Unit = {
     guiState match {
-      case GS_DRAWING =>
+      case GS_DRAWING(cfg) =>
         val imgData = createImgData
         val id = pers.save(imgData)
         imgEvents = createNewImageEvents
-        guiState = GS_MSG("Saved to %d" format id)
+        guiState = GS_MSG("Saved to %d" format id, cfg)
         canvas.repaint()
-      case GS_MSG(_) =>
-        guiState = GS_CLEAR
+      case GS_MSG(_, cfg) =>
+        guiState = GS_CLEAR(cfg)
         canvas.repaint()
-      case GS_CLEAR =>
-        guiState = GS_DRAWING
+      case GS_CLEAR(cfg) =>
+        guiState = GS_DRAWING(cfg)
         canvas.repaint()
       case GS_LOAD(id) => // Nothing to do here
     }

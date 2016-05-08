@@ -1,5 +1,16 @@
 package net.entelijan
 
+case class PixImageConfig(urlStrings: Seq[String])
+
+object PixImageConfigFactory {
+
+  def a1: PixImageConfig = {
+    val urlStrings = List("a1/g10a.png", "a1/g11a.png", "a1/g2a.png", "a1/g4a.png", "a1/g7a.png", "a1/g9a.png")
+    PixImageConfig(urlStrings)
+  }
+
+}
+
 object PixImageSourceGenerator extends App {
 
   val urlStrings = List("a1/g10a.png", "a1/g11a.png", "a1/g2a.png", "a1/g4a.png", "a1/g7a.png", "a1/g9a.png")

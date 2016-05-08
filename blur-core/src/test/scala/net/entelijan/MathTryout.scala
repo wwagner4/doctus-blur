@@ -2,6 +2,7 @@ package net.entelijan
 
 object MathTryout extends App {
 
+  f
 
   def f: Unit = {
     (0 to (5000, 50)) foreach { x =>

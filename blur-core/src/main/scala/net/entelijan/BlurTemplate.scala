@@ -29,6 +29,10 @@ sealed trait BlurConfig {
 
   def images: Seq[PixImage]
 
+  def realizeDirections: Boolean
+
+  def densityFactor: Double
+
 }
 
 case object BC_Giacometti extends BlurConfig {
@@ -38,6 +42,9 @@ case object BC_Giacometti extends BlurConfig {
     PixImageHolder.img0004,
     PixImageHolder.img0005)
 
+  def realizeDirections = true
+
+  def densityFactor = 1.0
 }
 
 case object BC_Buddha extends BlurConfig {
@@ -52,6 +59,10 @@ case object BC_Buddha extends BlurConfig {
     PixImageHolderB1.img0007,
     PixImageHolderB1.img0008,
     PixImageHolderB1.img0009)
+
+  def realizeDirections = false
+
+  def densityFactor = 5.0
 
 }
 
@@ -154,7 +165,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val pixImages = config.images
     val pi = pixImages(imgRan.nextInt(pixImages.size))
     val pir = pi.width.toDouble / pi.height
-    val cnt = (math.pow(size, 0.2) * 5000.0).toInt
+    val cnt = (math.pow(size, 0.2) * 5000.0 * config.densityFactor).toInt
     val poimg = PointImageGenerator.createPointImage(pi, cnt)
     def ranAngle: Double = ran.nextDouble() * math.Pi
     poimg.points.map { pos =>
@@ -234,8 +245,12 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
     val size = math.abs(vec.y)
     val off = startPoint - DoctusPoint(0, 0)
     val dir =
-      if (startPoint.x > pos.x) DD_LeftToRight
-      else DD_RightToLeft
+      if (guiState.config.realizeDirections) {
+        if (startPoint.x > pos.x) DD_LeftToRight
+        else DD_RightToLeft
+      } else {
+        DD_RightToLeft
+      }
     shapes = createShapes(size, off, dir, guiState.config)
     imgEvents = imgEvents :+ ImgEvent(off.x, off.y, size, dir)
     canvas.repaint()

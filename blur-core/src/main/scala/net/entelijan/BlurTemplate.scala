@@ -62,7 +62,7 @@ case object BC_Buddha extends BlurConfig {
 
   def realizeDirections = false
 
-  def densityFactor = 5.0
+  def densityFactor = 6.0
 
 }
 

@@ -62,7 +62,7 @@ case object BC_Buddha extends BlurConfig {
 
   def realizeDirections = false
 
-  def densityFactor = 6.0
+  def densityFactor = 0.5
 
 }
 
@@ -90,12 +90,13 @@ trait Shape {
 
 }
 
-case class Circle(pos: DoctusPoint, diameter: Double) extends Shape {
+case class Circle(pos: DoctusPoint, diameter: Double, ran: Random) extends Shape {
 
   def draw(g: DoctusGraphics): Unit = {
-    val alpha = 255 * math.pow(1.08, -diameter)
+    val alpha = 5 * math.pow(1.06, -diameter)
     g.fill(DoctusColorBlack, alpha)
-    g.ellipse(pos, diameter, diameter)
+    val d = diameter * ran.nextDouble() * 8
+    g.ellipse(pos, d, d)
   }
 
 }
@@ -189,7 +190,7 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
       val length = size / 150
 //      Line(pos1, length, stroke, ranAngle, 0)
       //println("len=%.2f" format length)
-      Circle(pos1, length)
+      Circle(pos1, length, ran)
     }
   }
 

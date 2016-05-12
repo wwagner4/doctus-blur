@@ -90,6 +90,16 @@ trait Shape {
 
 }
 
+case class Circle(pos: DoctusPoint, diameter: Double) extends Shape {
+
+  def draw(g: DoctusGraphics): Unit = {
+    val alpha = 255 * math.pow(1.08, -diameter)
+    g.fill(DoctusColorBlack, alpha)
+    g.ellipse(pos, diameter, diameter)
+  }
+
+}
+
 case class Line(
                  pos: DoctusPoint,
                  length: Double,
@@ -176,7 +186,10 @@ case class BlurDoctusTemplate(canvas: DoctusCanvas, sche: DoctusScheduler, pers:
         else 1.0 - pos.x
       val pos1 = DoctusPoint((x - xoff) * size, pos.y * size) + off
       val stroke = math.max(size / 2000, 0.1)
-      Line(pos1, size / 150, stroke, ranAngle, 0)
+      val length = size / 150
+//      Line(pos1, length, stroke, ranAngle, 0)
+      //println("len=%.2f" format length)
+      Circle(pos1, length)
     }
   }
 

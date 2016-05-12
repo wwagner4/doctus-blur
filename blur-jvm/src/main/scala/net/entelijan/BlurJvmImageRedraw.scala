@@ -24,10 +24,10 @@ object BlurJvmImageRedraw extends App {
   }
 
   val cfgAllImages = {
-    (0 to 0).map(i => RedrawConfig("allimg", 2500, 1500, i)).toParArray
+    (0 to 10).map(i => RedrawConfig("allimgCIRC", 2500, 1500, i)).toParArray
   }
 
-  cfgAllSizes.toParArray.foreach {
+  cfgAllImages.toParArray.foreach {
     redraw
   }
   System.exit(0)

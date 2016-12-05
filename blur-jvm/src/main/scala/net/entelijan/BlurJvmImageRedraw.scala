@@ -24,7 +24,7 @@ object BlurJvmImageRedraw extends App {
   }
 
   val cfgAllImages = {
-    (0 to 11).map(i => RedrawConfig("allimgCIRC03", 5000, 3500, i)).toParArray
+    (19 to 30).map(i => RedrawConfig("allimg002", 5000, 3500, i))
   }
 
   cfgAllImages.toParArray.foreach {
@@ -43,14 +43,20 @@ object BlurJvmImageRedraw extends App {
     val bi = new BufferedImage(cfg.width, cfg.height, BufferedImage.TYPE_BYTE_GRAY)
     val canvas = DoctusTemplateCanvasBufferedImage(DoctusBufferedImage(bi))
     val pers = ImgPersistorJvm
+    pers.load(cfg.id) match {
+      case Some(imgData) =>
+        val templ = BlurTemplateReload(canvas, imgData)
+        DoctusTemplateController(templ, sched, canvas)
+        canvas.repaint()
 
-    val templ = BlurDoctusTemplate(canvas, sched, pers, BM_REDRAW(cfg.id))
-    DoctusTemplateController(templ, sched, canvas)
-    canvas.repaint()
+        println("writing file")
+        ImageIO.write(bi, "png", file)
+        println("wrote to '%s'" format file)
+      case None =>
+        println("could not load id '%d'" format cfg.id)
 
-    println("writing file")
-    ImageIO.write(bi, "png", file)
-    println("wrote to '%s'" format file)
+    }
+
 
   }
 

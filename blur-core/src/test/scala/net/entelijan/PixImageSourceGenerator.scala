@@ -18,11 +18,18 @@ object PixImageConfigFactory {
     PixImageConfig(urlStrings, "PixImageHolderB1")
   }
 
+  def c1: PixImageConfig = {
+    val dir = new File("blur-core/src/main/resources/c1")
+    require(dir.exists() && dir.isDirectory)
+    val urlStrings = dir.list().map { nam => s"c1/$nam" }.filter(nam => nam.endsWith("png"))
+    PixImageConfig(urlStrings, "PixImageHolderC1")
+  }
+
 }
 
 object PixImageSourceGenerator extends App {
 
-  val config = PixImageConfigFactory.b1
+  val config = PixImageConfigFactory.c1
 
   case class SrcVal(name: String, pixels: Seq[Double])
 

@@ -10,21 +10,10 @@ import javafx.stage.Stage
 import doctus.core.template._
 import doctus.jvm._
 
-object BlurJvmRedraw extends App {
-
-  class BlurAppRedraw extends BlurApp {
-    def mode = BM_REDRAW(2)
-    val width = 800
-    val height = 650
-  }
-
-  Application.launch(classOf[BlurAppRedraw], args: _*)
-}
-
 object BlurJvmDraw extends App {
 
   class BlurAppDraw extends BlurApp {
-    def mode = BM_DRAW(BC_Buddha)
+    def config: BlurConfig = BC_Giacometti
     val width = 1000
     val height = 600
   }
@@ -34,7 +23,7 @@ object BlurJvmDraw extends App {
 
 trait BlurApp extends Application {
 
-  def mode: BlurMode
+  def config: BlurConfig
   def width: Int
   def height: Int
 
@@ -56,7 +45,7 @@ trait BlurApp extends Application {
     val pers = ImgPersistorJvm
 
     // Common to all platforms
-    val templ = BlurDoctusTemplate(canvas, sched, pers, mode)
+    val templ = BlurDoctusTemplate(canvas, sched, pers, config)
     DoctusTemplateController(templ, sched, canvas)
 
     stage.setScene(scene)

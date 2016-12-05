@@ -47,11 +47,15 @@ object ImgPersistorJvm extends ImgPersitor {
     id
   }
 
-  override def load(id: Int): ImgData = {
+  override def load(id: Int): Option[ImgData] = {
     val in = new File(dir, fileName(id))
-    require(in.canRead, "Inputfile '%s' is not readable" format in)
-    val dataTxt = scala.io.Source.fromFile(in).mkString
-    read[ImgData](dataTxt)
+    if (!in.canRead) {
+      None
+    } else {
+      val dataTxt = scala.io.Source.fromFile(in).mkString
+      val imgData = read[ImgData](dataTxt)
+      Some(imgData)
+    }
   }
 
   private def fileName(id: Int): String = "img%04d.txt" format id
